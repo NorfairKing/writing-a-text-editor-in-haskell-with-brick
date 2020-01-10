@@ -1,0 +1,46 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.31.2.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: dcf06a6fd9d1bce61cbf8400e20910ed9af064fd301d5721135f36bd96516fc5
+
+name:           text-editor
+version:        0.0.0.0
+homepage:       https://github.com/NorfairKing/writing-a-text-editor-in-haskell-with-brick#readme
+bug-reports:    https://github.com/NorfairKing/writing-a-text-editor-in-haskell-with-brick/issues
+license:        MIT
+build-type:     Simple
+
+source-repository head
+  type: git
+  location: https://github.com/NorfairKing/writing-a-text-editor-in-haskell-with-brick
+
+library
+  exposed-modules:
+      Tui
+  other-modules:
+      Paths_text_editor
+  hs-source-dirs:
+      src
+  build-depends:
+      base <5
+    , brick
+    , cursor
+    , cursor-brick
+    , directory
+    , vty
+  default-language: Haskell2010
+
+executable text-editor
+  main-is: Main.hs
+  other-modules:
+      Paths_text_editor
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base <5
+    , text-editor
+  default-language: Haskell2010
