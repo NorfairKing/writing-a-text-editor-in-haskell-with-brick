@@ -1,0 +1,17 @@
+resolver: lts-14.20
+packages:
+- text-editor
+extra-deps:
+  - github: NorfairKing/cursor
+    commit: 452e43cb466f8ac010da8318f84836e8ceca1efe
+    subdirs:
+      - cursor
+      - cursor-gen
+  - github: NorfairKing/validity
+    commit: 1ba19a12be1f7da1d3e0054e8dbbc82ec60d2160
+    subdirs:
+      - validity
+  - github: NorfairKing/cursor-brick
+    commit: 94907e9ad1a2100fa0309733a58317c982e0f146
+    subdirs:
+      - cursor-brick
