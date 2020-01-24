@@ -58,7 +58,18 @@ handleTuiEvent :: TuiState -> BrickEvent n e -> EventM n (Next TuiState)
 handleTuiEvent s e =
   case e of
     VtyEvent vtye ->
-      case vtye of
-        EvKey (KChar 'q') [] -> halt s
-        _ -> continue s
+      let mDo ::
+               (TextFieldCursor -> Maybe TextFieldCursor)
+            -> EventM n (Next TuiState)
+          mDo func = do
+            let tfc = stateCursor s
+            let tfc' = fromMaybe tfc $ func tfc
+            let s' = s {stateCursor = tfc'}
+            continue s'
+       in case vtye of
+            EvKey (KChar c) [] -> mDo $ textFieldCursorInsertChar c . Just
+            EvKey KRight [] -> mDo textFieldCursorSelectNextChar
+            EvKey KLeft [] -> mDo textFieldCursorSelectPrevChar
+            EvKey KEsc [] -> halt s
+            _ -> continue s
     _ -> continue s
