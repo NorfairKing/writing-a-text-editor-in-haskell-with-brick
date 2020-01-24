@@ -10,6 +10,7 @@ import Brick.Types
 import Brick.Widgets.Core
 import Cursor.Brick.TextField
 import Cursor.TextField
+import Cursor.Types
 import Data.Maybe
 import qualified Data.Text.IO as T
 import Graphics.Vty.Input.Events
@@ -68,8 +69,14 @@ handleTuiEvent s e =
             continue s'
        in case vtye of
             EvKey (KChar c) [] -> mDo $ textFieldCursorInsertChar c . Just
+            EvKey KUp [] -> mDo textFieldCursorSelectPrevLine
+            EvKey KDown [] -> mDo textFieldCursorSelectNextLine
             EvKey KRight [] -> mDo textFieldCursorSelectNextChar
             EvKey KLeft [] -> mDo textFieldCursorSelectPrevChar
+                                -- import Cursor.Types
+            EvKey KBS [] -> mDo $ dullMDelete . textFieldCursorRemove
+            EvKey KDel [] -> mDo $ dullMDelete . textFieldCursorDelete
+            EvKey KEnter [] -> mDo $ Just . textFieldCursorInsertNewline . Just
             EvKey KEsc [] -> halt s
             _ -> continue s
     _ -> continue s
