@@ -15,3 +15,9 @@ extra-deps:
     commit: 94907e9ad1a2100fa0309733a58317c982e0f146
     subdirs:
       - cursor-brick
+nix:
+  path: [ "nixpkgs=https://github.com/NixOS/nixpkgs/archive/323fe92057bb38475a446ff5e18d3b388c2e4403.tar.gz" ]
+  add-gc-roots: true
+  packages:
+  - zlib
+
