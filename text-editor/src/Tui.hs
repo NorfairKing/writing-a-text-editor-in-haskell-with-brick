@@ -7,12 +7,16 @@ import System.Directory
 import Brick.AttrMap
 import Brick.Main
 import Brick.Types
+import Brick.Util
+import Brick.Widgets.Border
+import Brick.Widgets.Center
 import Brick.Widgets.Core
 import Cursor.Brick.TextField
 import Cursor.TextField
 import Cursor.Types
 import Data.Maybe
 import qualified Data.Text.IO as T
+import Graphics.Vty.Attributes
 import Graphics.Vty.Input.Events
 import Path
 import Path.IO
@@ -22,7 +26,7 @@ tui :: IO ()
 tui = do
   initialState <- buildInitialState
   endState <- defaultMain tuiApp initialState
-  print endState
+  print endState -- TODO Save the file
 
 data TuiState =
   TuiState
@@ -41,19 +45,25 @@ tuiApp =
     , appChooseCursor = showFirstCursor
     , appHandleEvent = handleTuiEvent
     , appStartEvent = pure
-    , appAttrMap = const $ attrMap mempty []
+    , appAttrMap = const $ attrMap mempty [("text", fg red), ("bg", fg blue)]
     }
 
 buildInitialState :: IO TuiState
 buildInitialState = do
-  path <- resolveFile' "example.txt"
+  path <- resolveFile' "example.txt" -- TODO edit any file
   maybeContents <- forgivingAbsence $ T.readFile (fromAbsFile path)
   let contents = fromMaybe "" maybeContents
   let tfc = makeTextFieldCursor contents
   pure TuiState {stateCursor = tfc}
 
 drawTui :: TuiState -> [Widget ResourceName]
-drawTui ts = [selectedTextFieldCursorWidget ResourceName (stateCursor ts)]
+drawTui ts =
+  [ forceAttr "text" $
+    centerLayer $
+    border $
+    padLeftRight 1 $ selectedTextFieldCursorWidget ResourceName (stateCursor ts)
+  , forceAttr "bg" $ fill '@'
+  ]
 
 handleTuiEvent :: TuiState -> BrickEvent n e -> EventM n (Next TuiState)
 handleTuiEvent s e =
@@ -80,3 +90,13 @@ handleTuiEvent s e =
             EvKey KEsc [] -> halt s
             _ -> continue s
     _ -> continue s
+-- TODO: Implement Undo
+-- TODO: Go to next line if at end of line and press right
+-- TODO: duplicate line
+-- TODO: Copy-pasting
+-- TODO: replace mode
+-- TODO: move to end of line
+-- TODO: move to end of word
+-- TODO: uppercase mode
+-- TODO: uppercase current char
+-- TODO: uppercase current word
