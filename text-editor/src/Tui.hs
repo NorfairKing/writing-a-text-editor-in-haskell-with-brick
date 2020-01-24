@@ -8,14 +8,14 @@ import Brick.AttrMap
 import Brick.Main
 import Brick.Types
 import Brick.Widgets.Core
+import Cursor.Brick.TextField
+import Cursor.TextField
 import Data.Maybe
 import qualified Data.Text.IO as T
 import Graphics.Vty.Input.Events
 import Path
 import Path.IO
 import Text.Show.Pretty
-
-import Cursor.TextField
 
 tui :: IO ()
 tui = do
@@ -52,7 +52,7 @@ buildInitialState = do
   pure TuiState {stateCursor = tfc}
 
 drawTui :: TuiState -> [Widget ResourceName]
-drawTui _ts = [strWrap (ppShow _ts)]
+drawTui ts = [selectedTextFieldCursorWidget ResourceName (stateCursor ts)]
 
 handleTuiEvent :: TuiState -> BrickEvent n e -> EventM n (Next TuiState)
 handleTuiEvent s e =
