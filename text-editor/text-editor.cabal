@@ -1,10 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.31.2.
+-- This file has been generated from package.yaml by hpack version 0.33.0.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: dcf06a6fd9d1bce61cbf8400e20910ed9af064fd301d5721135f36bd96516fc5
+-- hash: e7ceddc718b4cd592526b5feb2451e8803f490ab75beff562bf27c811fe02f02
 
 name:           text-editor
 version:        0.0.0.0
@@ -30,6 +30,10 @@ library
     , cursor
     , cursor-brick
     , directory
+    , path
+    , path-io
+    , pretty-show
+    , text
     , vty
   default-language: Haskell2010
 

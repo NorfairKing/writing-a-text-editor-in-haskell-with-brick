@@ -8,7 +8,14 @@ import Brick.AttrMap
 import Brick.Main
 import Brick.Types
 import Brick.Widgets.Core
+import Data.Maybe
+import qualified Data.Text.IO as T
 import Graphics.Vty.Input.Events
+import Path
+import Path.IO
+import Text.Show.Pretty
+
+import Cursor.TextField
 
 tui :: IO ()
 tui = do
@@ -18,6 +25,8 @@ tui = do
 
 data TuiState =
   TuiState
+    { stateCursor :: TextFieldCursor
+    }
   deriving (Show, Eq)
 
 data ResourceName =
@@ -35,10 +44,15 @@ tuiApp =
     }
 
 buildInitialState :: IO TuiState
-buildInitialState = pure TuiState
+buildInitialState = do
+  path <- resolveFile' "example.txt"
+  maybeContents <- forgivingAbsence $ T.readFile (fromAbsFile path)
+  let contents = fromMaybe "" maybeContents
+  let tfc = makeTextFieldCursor contents
+  pure TuiState {stateCursor = tfc}
 
 drawTui :: TuiState -> [Widget ResourceName]
-drawTui _ts = []
+drawTui _ts = [strWrap (ppShow _ts)]
 
 handleTuiEvent :: TuiState -> BrickEvent n e -> EventM n (Next TuiState)
 handleTuiEvent s e =
