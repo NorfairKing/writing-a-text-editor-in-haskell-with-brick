@@ -11,22 +11,34 @@ import Brick.Util
 import Brick.Widgets.Border
 import Brick.Widgets.Center
 import Brick.Widgets.Core
+import Control.Monad
 import Cursor.Brick.TextField
 import Cursor.TextField
 import Cursor.Types
 import Data.Maybe
+import Data.Text (Text)
 import qualified Data.Text.IO as T
 import Graphics.Vty.Attributes
 import Graphics.Vty.Input.Events
 import Path
 import Path.IO
+import System.Environment
+import System.Exit
 import Text.Show.Pretty
 
 tui :: IO ()
 tui = do
-  initialState <- buildInitialState
-  endState <- defaultMain tuiApp initialState
-  print endState -- TODO Save the file
+  args <- getArgs
+  case args of
+    [] -> die "No argument to choose file to edit."
+    (fp:_) -> do
+      path <- resolveFile' fp
+      maybeContents <- forgivingAbsence $ T.readFile (fromAbsFile path)
+      let contents = fromMaybe "" maybeContents
+      initialState <- buildInitialState contents
+      endState <- defaultMain tuiApp initialState
+      let contents' = rebuildTextFieldCursor (stateCursor endState)
+      unless (contents == contents') $ T.writeFile (fromAbsFile path) contents'
 
 data TuiState =
   TuiState
@@ -48,11 +60,8 @@ tuiApp =
     , appAttrMap = const $ attrMap mempty [("text", fg red), ("bg", fg blue)]
     }
 
-buildInitialState :: IO TuiState
-buildInitialState = do
-  path <- resolveFile' "example.txt" -- TODO edit any file
-  maybeContents <- forgivingAbsence $ T.readFile (fromAbsFile path)
-  let contents = fromMaybe "" maybeContents
+buildInitialState :: Text -> IO TuiState
+buildInitialState contents = do
   let tfc = makeTextFieldCursor contents
   pure TuiState {stateCursor = tfc}
 
