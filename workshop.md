@@ -2,6 +2,11 @@
 
 https://github.com/NorfairKing/writing-a-text-editor-in-haskell-with-brick
 
+Preparations:
+
+* On windows: Get the WSL
+* install `stack`: `haskellstack.org`
+
 # Why TUIs
 
 - All in a terminal
